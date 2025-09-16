@@ -18,7 +18,17 @@ This repository demonstrates how to use **ESP-IDF power management features** on
 
 ---
 
+## Photos
+
+### Console Output
+![console](/docs/Console.png)
+
+### Hardware Setup
+![setup](/docs/Setup.jpg)
+
 # ESP32 Current Consumption
+
+---
 
 Measurements of ESP32 power consumption in different modes, with radio disabled:
 
