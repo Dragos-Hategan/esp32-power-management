@@ -10,7 +10,7 @@
 #ifndef FREQUENCY_H
 #define FREQUENCY_H
 
-#define WAIT_TIME_BETWEEN_CLOCK_FREQUENCY_CHANGES_MS 3000
+#define WAIT_TIME_BETWEEN_CLOCK_FREQUENCY_CHANGES_MS 2000
 
 /**
  * @brief Reconfigure CPU frequency across 80/160/240 MHz and print results.

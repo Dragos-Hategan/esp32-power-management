@@ -24,15 +24,32 @@
 
 #include "frequency.h"
 
+static const int FREQUENCY_MHZ[3] = {80, 160, 240};
+static esp_pm_config_t cfg = {
+    .min_freq_mhz = 80,
+    .max_freq_mhz = 240,
+    .light_sleep_enable = false}; // if configUSE_TICKLESS_IDLE is on and light_sleep_enable is true, esp32 goes to sleep if all user tasks are blocked
+
 /**
  * @brief Print current CPU frequency using Clock Tree API with a label.
- *
- * @param label Text prefix printed before the frequency value.
  */
-static void print_cpu_hz(const char *label){
+static void print_cpu_hz(void)
+{
     uint32_t hz = 0;
     ESP_ERROR_CHECK(esp_clk_tree_src_get_freq_hz(SOC_MOD_CLK_CPU, ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACT, &hz));
-    printf("%s: " "%" PRIu32 "MHz\n", label, hz / 1000000);
+    printf("Frequency after cfg: " "%" PRIu32 "MHz\n", hz / 1000000);
+}
+
+/**
+ * @brief Set CPU frequency to a fixed value and print it.
+ * @param frequency CPU frequency in MHz (e.g., 80, 160, 240).
+ */
+static void configure_and_print(int frequency)
+{
+    cfg.min_freq_mhz = cfg.max_freq_mhz = frequency;
+    ESP_ERROR_CHECK(esp_pm_configure(&cfg));
+    print_cpu_hz();
+    printf("\n");
 }
 
 void compare_clock_speeds_power_consumption(void)
@@ -42,23 +59,18 @@ void compare_clock_speeds_power_consumption(void)
     esp_pm_get_configuration(&default_cfg);
 
     printf("\nDefault cfg:\nmin_freq_mhz = %d\nmax_freq_mhz = %d\nlight_sleep_enable = %s\n\n",
-        default_cfg.min_freq_mhz,
-        default_cfg.max_freq_mhz,
-        default_cfg.light_sleep_enable ? "TRUE" : "FALSE");
-    
+           default_cfg.min_freq_mhz,
+           default_cfg.max_freq_mhz,
+           default_cfg.light_sleep_enable ? "TRUE" : "FALSE");
+
     // 2) Apply initial wide range and measure reconfiguration time
-    uint64_t frequency_change_t0 = esp_timer_get_time();   // µs
-    esp_pm_config_t cfg = {
-        .min_freq_mhz = 80,
-        .max_freq_mhz = 240,
-        .light_sleep_enable = false // if configUSE_TICKLESS_IDLE is on and light_sleep_enable is true, esp32 goes to sleep if all user tasks are blocked
-    };
+    uint64_t frequency_change_t0 = esp_timer_get_time(); // µs
     ESP_ERROR_CHECK(esp_pm_configure(&cfg));
     uint64_t frequency_change_dt_us = esp_timer_get_time() - frequency_change_t0;
     printf("After first cfg:\nmin_freq_mhz = %d\nmax_freq_mhz = %d\nlight_sleep_enable = %s\n",
-    cfg.min_freq_mhz,
-    cfg.max_freq_mhz,
-    cfg.light_sleep_enable ? "TRUE" : "FALSE");
+           cfg.min_freq_mhz,
+           cfg.max_freq_mhz,
+           cfg.light_sleep_enable ? "TRUE" : "FALSE");
     printf("This reconfiguration took %" PRIu64 "us, %.2fms.\n", frequency_change_dt_us, (float)frequency_change_dt_us / 1000);
 
     // 3) Show active PM locks (DFS can pin frequency at max)
@@ -66,28 +78,18 @@ void compare_clock_speeds_power_consumption(void)
     esp_pm_dump_locks(stdout);
     printf("Frequency is always set to max_freq_mhz due to the active rtos0 power management lock via Dynamic Frequency Scaling\n\n");
 
+    int index = 0;
+
     // 4) Sweep fixed frequencies: 80, 160, 240 MHz
-    while (1){
-        cfg.min_freq_mhz = cfg.max_freq_mhz = 80;
-        ESP_ERROR_CHECK(esp_pm_configure(&cfg));
-        print_cpu_hz("Frequency after cfg [80-80]"); 
-        vTaskDelay(pdMS_TO_TICKS(2000));
+    while (1)
+    {
+        configure_and_print(FREQUENCY_MHZ[index]);
+        index++;
+        if (index == sizeof(FREQUENCY_MHZ) / sizeof(FREQUENCY_MHZ[0]))
+        {
+            index = 0;
+        }
 
-        printf("\n");
-    
-        cfg.min_freq_mhz = cfg.max_freq_mhz = 160;
-        ESP_ERROR_CHECK(esp_pm_configure(&cfg));
-        print_cpu_hz("Frequency after cfg [160-160]");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        printf("\n");
-    
-        cfg.min_freq_mhz = cfg.max_freq_mhz = 240;
-        ESP_ERROR_CHECK(esp_pm_configure(&cfg));
-        print_cpu_hz("Frequency after cfg [240-240]");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        printf("\n");
+        vTaskDelay(pdMS_TO_TICKS(WAIT_TIME_BETWEEN_CLOCK_FREQUENCY_CHANGES_MS));
     }
-
 }
