@@ -28,7 +28,7 @@ This repository demonstrates how to use **ESP-IDF power management features** on
 
 ---
 
-# ESP32 Current Consumption
+# ESP32 Devkit Current Consumption
 
 Measurements of ESP32 power consumption in different modes, with radio disabled:
 
