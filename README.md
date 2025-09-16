@@ -1,4 +1,4 @@
-# ESP32 Power Management Demo
+# ESP32 Power Management
 
 This repository demonstrates how to use **ESP-IDF power management features** on the ESP32, focusing on CPU frequency scaling, light sleep, and deep sleep. The project provides simple routines to observe how current consumption changes across modes.
 
