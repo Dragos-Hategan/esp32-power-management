@@ -34,9 +34,9 @@ Measurements of ESP32 power consumption in different modes, with radio disabled:
 
 | Mode                        | Frequency | Wake-up Source | Current (mA) |
 |-----------------------------|-----------|----------------|--------------|
-| Active Loop (LED blinking)  | 80 MHz    | –              | 35.1         |
-| Active Loop (LED blinking)  | 160 MHz   | –              | 40.4         |
-| Active Loop (LED blinking)  | 240 MHz   | –              | 51.9         |
+| Active Loop                 | 80 MHz    | –              | 35.1         |
+| Active Loop                 | 160 MHz   | –              | 40.4         |
+| Active Loop                 | 240 MHz   | –              | 51.9         |
 | Active (flash erased, idle) | 160 MHz   | –              | 31.96        |
 | Light Sleep                 | 160 MHz   | Timer          | 12.3         |
 | Deep Sleep                  | 160 MHz   | Timer          | 10.8         |
