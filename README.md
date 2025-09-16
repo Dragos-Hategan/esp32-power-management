@@ -32,7 +32,7 @@ This repository demonstrates how to use **ESP-IDF power management features** on
 
 The current values measured on the **ESP32 DevKit** are higher than those in the official Espressif datasheet for the bare ESP32-WROOM module. This is because the DevKit board includes extra circuitry that draws current even when the ESP32 core is in deep sleep:
 
-- **USB–UART bridge (CH340/CP2102)**: always powered from USB.  
+- **USB–UART bridge (CH340/CP2102)**: always powered depending on what power rail it is connected to.  
 - **LDO regulator (5V → 3.3V)**: adds quiescent current and conversion losses.  
 - **On-board LEDs**: the power LED alone draws ~1 mA continuously.  
 - **USB protection & support circuitry**: small but non-negligible leakage currents.  
