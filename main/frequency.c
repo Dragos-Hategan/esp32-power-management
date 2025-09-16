@@ -37,7 +37,7 @@ static void print_cpu_hz(void)
 {
     uint32_t hz = 0;
     ESP_ERROR_CHECK(esp_clk_tree_src_get_freq_hz(SOC_MOD_CLK_CPU, ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACT, &hz));
-    printf("Frequency after cfg: " "%" PRIu32 "MHz\n", hz / 1000000);
+    printf("Frequency after cfg: " "%" PRIu32 "MHz\n\n", hz / 1000000);
 }
 
 /**
@@ -49,7 +49,6 @@ static void configure_and_print(int frequency)
     cfg.min_freq_mhz = cfg.max_freq_mhz = frequency;
     ESP_ERROR_CHECK(esp_pm_configure(&cfg));
     print_cpu_hz();
-    printf("\n");
 }
 
 void compare_clock_speeds_power_consumption(void)
