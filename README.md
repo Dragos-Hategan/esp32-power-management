@@ -28,6 +28,19 @@ This repository demonstrates how to use **ESP-IDF power management features** on
 
 ---
 
+## Why DevKit Consumption Is Higher Than Module Specs
+
+The current values measured on the **ESP32 DevKit** are higher than those in the official Espressif datasheet for the bare ESP32-WROOM module. This is because the DevKit board includes extra circuitry that draws current even when the ESP32 core is in deep sleep:
+
+- **USB–UART bridge (CH340/CP2102)**: always powered from USB.  
+- **LDO regulator (5V → 3.3V)**: adds quiescent current and conversion losses.  
+- **On-board LEDs**: the power LED alone draws ~1 mA continuously.  
+- **USB protection & support circuitry**: small but non-negligible leakage currents.  
+
+As a result, while the **bare ESP32-WROOM module** can reach deep sleep currents as low as **~10 µA**, the **DevKit** typically stays in the **mA range**. For ultra-low power applications, it is recommended to design with the bare module or a custom PCB.
+
+---
+
 ## ESP32 Devkit Current Consumption
 
 Measurements of ESP32 power consumption in different modes, with radio disabled:
