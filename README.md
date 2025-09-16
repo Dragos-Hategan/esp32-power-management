@@ -39,6 +39,8 @@ The current values measured on the **ESP32 DevKit** are higher than those in the
 
 As a result, while the **bare ESP32-WROOM module** can reach deep sleep currents as low as **~10 µA**, the **DevKit** typically stays in the **mA range**. For ultra-low power applications, it is recommended to design with the bare module or a custom PCB.
 
+![devboard](/docs/DevkitBoard.jpg)
+
 ---
 
 ## ESP32 Devkit Current Consumption
